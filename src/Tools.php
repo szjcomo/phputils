@@ -9,7 +9,7 @@
  */
 
 namespace szjcomo\phputils;
-
+use \think\Image as tpImage;
 /**
  * 常用工具类
  */
@@ -25,7 +25,7 @@ class Tools
 	 * @param    integer    $error [description]
 	 * @return   array             [description]
 	 */
-	public static function appResult($info = 'ERROR',$data = null,$err = true,$error = 0)
+	public static function appResult(string $info,$data = null,$err = true,$error = 0)
 	{
 		return ['info'=>$info,'data'=>$data,'err'=>$err,'error'=>$error];
 	}
@@ -44,7 +44,112 @@ class Tools
 		return ['info'=>$info,'data'=>$data,'err'=>$err,'error'=>$error];
 	}
 
+    /**
+     * [curl_get 发送get请求]
+     * author: szjcomo
+     * time  : 2019/10/25
+     * @param string $url
+     * @param array $header
+     */
+	public static function curl_get(string $url,array $header = [],$debug = false,$Swoole = false)
+    {
+        if(extension_loaded("Swoole") && $Swoole) {
+           return HttpClient::curl_get($url,$header);
+        } else {
+        	return self::org_curl_get($url,$header,$debug);
+        }
+    }
+    /**
+     * [curl_post 发送post请求]
+     * @author 	   szjcomo
+     * @createTime 2019-10-25
+     * @param      string     $url    [description]
+     * @param      [type]     $data   [description]
+     * @param      array      $header [description]
+     * @param      boolean    $debug  [description]
+     * @param      boolean    $Swoole [description]
+     * @return     [type]             [description]
+     */
+    public static function curl_post(string $url,$data,array $header = [],$debug = false,$Swoole = false)
+    {
+        if(extension_loaded("Swoole") && $Swoole){
+           return HttpClient::curl_post($url,$data);
+        } else {
+        	return self::org_curl_post($url,$data,$header,$debug);
+        }
+    }
+    /**
+     * [image 图像处理]
+     * @author        szjcomo
+     * @createTime 2019-10-26
+     * @param      string     $fileName [description]
+     * @return     [type]               [description]
+     */
+    public static function image(string $fileName)
+    {
+        return tpImage::open($fileName);
+    }
 
+    /**
+     * [org_curl_get php fpm原生的curl请求方式]
+     * @author 	   szjcomo
+     * @createTime 2019-10-25
+     * @param      string     $url    [description]
+     * @param      array      $header [description]
+     * @param      boolean    $debug  [description]
+     * @return     [type]             [description]
+     */
+    public static function org_curl_get(string $url,array $header = [],$debug = false)
+    {
+		try{
+			$ch = curl_init();  
+			curl_setopt($ch, CURLOPT_URL, $url);  
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			if(!empty($header)) curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);  
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);  
+			$data = curl_exec($ch);  
+			if (curl_errno($ch))  return curl_error($ch);//捕抓异常
+			curl_close($ch);
+			$debug && print_r($data);
+			return $data;
+		} catch(\Exception $err){
+			if($debug) print_r($err);
+			return false;
+		}
+    }
+    /**
+     * [org_curl_post 原生的php fpm post请求]
+     * @author 	   szjcomo
+     * @createTime 2019-10-25
+     * @param      string     $url      [description]
+     * @param      array      $postdata [description]
+     * @param      array      $header   [description]
+     * @param      boolean    $debug    [description]
+     * @return     [type]               [description]
+     */
+    public static function org_curl_post(string $url,array $postdata = [],array $header = [],$debug = false)
+    {
+		try{
+			$ch = curl_init($url);
+			curl_setopt($ch, CURLOPT_HEADER, 0);
+			if(!empty($header)) curl_setopt($ch, CURLOPT_HTTPHEADER,$header);
+			curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+			curl_setopt($ch, CURLOPT_POST, 1);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);    
+			curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);  
+			curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);  
+			$data = curl_exec($ch);
+			if (curl_errno($ch)) return curl_error($ch);//捕抓异常
+			curl_close($ch);
+			$debug && print_r($data);
+			return $data;			
+		} catch(\Exception $err){
+			if($debug) print_r($err);
+			return false;
+		}
+    }
 
 	/**
 	 * [Recursion 递归子节点操作]
