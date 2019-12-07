@@ -23,7 +23,7 @@ class IdentityNum
 	 * @param      string     $identitynumber [身份证号码]
 	 * @return     string                     [description]
 	 */
-	public static function getSex(string $identitynumber):string
+	public static function getSex(string $identitynumber):?string
 	{
 		if(empty($identitynumber) || !self::isIdentityNum($identitynumber)) return null;
 		if(strlen($identitynumber) == 15){
@@ -60,7 +60,7 @@ class IdentityNum
 	 * @param      string     $identitynumber [身份证号码]
 	 * @return     string                     [description]
 	 */
-	public static function getBorn(string $identitynumber):string
+	public static function getBorn(string $identitynumber):?string
 	{
 		if(empty($identitynumber) || !self::isIdentityNum($identitynumber)) return null;
         $birthday = ""; 
@@ -79,7 +79,7 @@ class IdentityNum
 	 * @param      string     $identitynumber [身份证号码]
 	 * @return     [type]                     [description]
 	 */
-	public static function getZodiac(string $identitynumber):string
+	public static function getZodiac(string $identitynumber):?string
 	{
 		if(empty($identitynumber) || !self::isIdentityNum($identitynumber)) return null;
 	    $start = 1901;
@@ -109,7 +109,7 @@ class IdentityNum
 	 * @param      string     $identitynumber [身份证号码]
 	 * @return     [type]                     [description]
 	 */
-	public static function getStarsign(string $identitynumber):string
+	public static function getStarsign(string $identitynumber):?string
 	{
 		if(empty($identitynumber) || !self::isIdentityNum($identitynumber)) return null;
 		$born = self::getBorn($identitynumber);
@@ -153,7 +153,7 @@ class IdentityNum
 	 * @param      string     $identitynumber [身份证号码]
 	 * @return     [type]                     [description]
 	 */
-	public static function repairIdentity(string $identitynumber):string
+	public static function repairIdentity(string $identitynumber):?string
 	{
         if (strlen($identitynumber) == 17) {
             $str = str_split($identitynumber);
@@ -169,7 +169,7 @@ class IdentityNum
         if (1 === preg_match($rule, (string) $identitynumber)) {
             return $identitynumber;
         } else {
-            return false;
+            return null;
         }
 	}
 	/**
