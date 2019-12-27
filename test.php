@@ -15,8 +15,6 @@ use szjcomo\phputils\IdentityNum;
 use szjcomo\phputils\Tools;
 
 
-
-
 //图像处理
 //$fileName = '123.jpg';
 //图像画转,更多用法请参考ThinkPHP5的图像处理类库
