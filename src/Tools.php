@@ -129,7 +129,7 @@ class Tools
      * @param      boolean    $debug    [description]
      * @return     [type]               [description]
      */
-    public static function org_curl_post(string $url,$postdata = [],array $header = [],$debug = false)
+    public static function org_curl_post(string $url,$postdata,array $header = [],$debug = false)
     {
 		try{
 			$ch = curl_init($url);
